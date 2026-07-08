@@ -25,3 +25,18 @@ team_matches["last5_win_pct"] = (
 )
 
 print(team_matches.head(10))
+# merge team1's form back onto the original match rows
+df = df.merge(
+    team_matches[["date", "team", "last5_win_pct"]],
+    left_on=["date", "team1"], right_on=["date", "team"],
+    how="left"
+).rename(columns={"last5_win_pct": "team1_last5_win_pct"}).drop(columns="team")
+
+# merge team2's form back onto the original match rows
+df = df.merge(
+    team_matches[["date", "team", "last5_win_pct"]],
+    left_on=["date", "team2"], right_on=["date", "team"],
+    how="left"
+).rename(columns={"last5_win_pct": "team2_last5_win_pct"}).drop(columns="team")
+
+print(df[["date", "team1", "team2", "team1_last5_win_pct", "team2_last5_win_pct"]].head(10))
