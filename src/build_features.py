@@ -89,3 +89,15 @@ df["team1_home_away"] = df.apply(lambda r: get_home_away(r, "team1"), axis=1)
 df["team2_home_away"] = df.apply(lambda r: get_home_away(r, "team2"), axis=1)
 
 print(df[["venue", "team1", "team1_home_away", "team2", "team2_home_away"]].drop_duplicates().head(15))
+# for first-ever matches/matchups, there's no history yet - fill with a neutral 0.5 (50/50, no info)
+feature_cols = [
+    "team1_last5_win_pct", "team2_last5_win_pct",
+    "team1_h2h_win_pct", "team2_h2h_win_pct",
+]
+for col in feature_cols:
+    df[col] = df[col].fillna(0.5)
+
+# save the final feature table - this is what modeling will load
+df.to_csv("data/processed/features.csv", index=False)
+print(f"Saved final feature table: {df.shape[0]} rows, {df.shape[1]} columns")
+print(df.columns.tolist())
