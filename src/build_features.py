@@ -69,3 +69,23 @@ def compute_head_to_head(df):
 
 df = compute_head_to_head(df)
 print(df[["date", "team1", "team2", "team1_h2h_win_pct", "team2_h2h_win_pct"]].head(15))
+team_home_city = {
+    "Lahore Qalandars": "Lahore",
+    "Karachi Kings": "Karachi",
+    "Islamabad United": "Rawalpindi",
+    "Peshawar Zalmi": "Rawalpindi",
+    "Multan Sultans": "Multan",
+    "Quetta Gladiators": "Quetta",
+}
+
+def get_home_away(row, team_col):
+    team = row[team_col]
+    home_city = team_home_city.get(team)
+    if home_city is None:
+        return "unknown"
+    return "home" if home_city in str(row["venue"]) else "away"
+
+df["team1_home_away"] = df.apply(lambda r: get_home_away(r, "team1"), axis=1)
+df["team2_home_away"] = df.apply(lambda r: get_home_away(r, "team2"), axis=1)
+
+print(df[["venue", "team1", "team1_home_away", "team2", "team2_home_away"]].drop_duplicates().head(15))
