@@ -40,3 +40,32 @@ df = df.merge(
 ).rename(columns={"last5_win_pct": "team2_last5_win_pct"}).drop(columns="team")
 
 print(df[["date", "team1", "team2", "team1_last5_win_pct", "team2_last5_win_pct"]].head(10))
+def compute_head_to_head(df):
+    h2h_team1 = []
+    h2h_team2 = []
+
+    for idx, row in df.iterrows():
+        current_date = row["date"]
+        t1, t2 = row["team1"], row["team2"]
+
+        # all previous matches between these two teams, in either order
+        past_matches = df[
+            (df["date"] < current_date) &
+            (((df["team1"] == t1) & (df["team2"] == t2)) |
+             ((df["team1"] == t2) & (df["team2"] == t1)))
+        ]
+
+        if len(past_matches) == 0:
+            h2h_team1.append(None)
+            h2h_team2.append(None)
+        else:
+            t1_wins = (past_matches["winner"] == t1).sum()
+            h2h_team1.append(t1_wins / len(past_matches))
+            h2h_team2.append(1 - (t1_wins / len(past_matches)))
+
+    df["team1_h2h_win_pct"] = h2h_team1
+    df["team2_h2h_win_pct"] = h2h_team2
+    return df
+
+df = compute_head_to_head(df)
+print(df[["date", "team1", "team2", "team1_h2h_win_pct", "team2_h2h_win_pct"]].head(15))
