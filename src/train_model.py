@@ -184,3 +184,16 @@ print("Saved reports/shap_summary_logreg.png")
 # average absolute SHAP value per feature = overall importance
 mean_abs_shap = pd.Series(abs(shap_values).mean(axis=0), index=X_test_simple.columns).sort_values(ascending=False)
 print(mean_abs_shap)
+import joblib
+
+joblib.dump(log_reg_simple, "src/model.pkl")
+joblib.dump(list(X_train_simple.columns), "src/feature_columns.pkl")
+
+# also save the list of unique teams and venues, so the app's dropdowns match your real data
+teams_list = sorted(set(df["team1"]).union(set(df["team2"])))
+venues_list = sorted(df["venue"].unique())
+
+joblib.dump(teams_list, "src/teams_list.pkl")
+joblib.dump(venues_list, "src/venues_list.pkl")
+
+print("Saved model, feature columns, teams list, and venues list.")
