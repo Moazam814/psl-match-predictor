@@ -96,7 +96,10 @@ feature_cols = [
 ]
 for col in feature_cols:
     df[col] = df[col].fillna(0.5)
-
+# create binary target: did team1 win?
+df["team1_won"] = (df["winner"] == df["team1"]).astype(int)
+# sanity check: is there any accidental bias in how team1/team2 were assigned?
+print(df["team1_won"].value_counts(normalize=True))
 # save the final feature table - this is what modeling will load
 df.to_csv("data/processed/features.csv", index=False)
 print(f"Saved final feature table: {df.shape[0]} rows, {df.shape[1]} columns")
