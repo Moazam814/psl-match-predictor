@@ -4,8 +4,6 @@ Predicts the winner of a Pakistan Super League (PSL) T20 match using historical 
 
 **[🔗 Live App](https://moazam-psl-predictor.streamlit.app)**
 
-![Predicted Winner Example](reports/app_screenshot.png)
-
 ## Overview
 
 This project parses 12 seasons of PSL match data (2015/16–2026, via Cricsheet), engineers leakage-safe predictive features, compares four classification models, and deploys the best-performing one as a Streamlit app with live interpretability.
@@ -29,7 +27,7 @@ Missing values for first-ever team appearances/matchups are filled with a neutra
 
 ## Model Comparison
 
-Time-based split: trained on 2015/16–2023/24 (274 matches), tested on 2025+2026 (76 matches) — no random shuffling, since it would leak future information into training.
+Time-based split: trained on 2015/16–2023/24 (274 matches), tested on 2025+2026 (76 matches) — no random shuffling, since that would leak future information into training.
 
 | Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
 |---|---|---|---|---|---|
@@ -38,13 +36,14 @@ Time-based split: trained on 2015/16–2023/24 (274 matches), tested on 2025+202
 | XGBoost | 0.500 | 0.451 | 0.697 | 0.548 | 0.577 |
 | LightGBM | 0.526 | 0.473 | 0.788 | 0.591 | 0.563 |
 
-**Logistic Regression performed best on ROC-AUC**, including outperforming more complex ensemble models — likely because with only 274 training rows, simpler models generalize more reliably than high-variance ones. An earlier version using raw team/venue identity as one-hot features scored **ROC-AUC 0.471 (worse than random)**; removing those high-cardinality columns in favor of engineered features raised it to 0.591.
+**Logistic Regression performed best on ROC-AUC**, outperforming more complex ensemble models — likely because with only 274 training rows, simpler models generalize more reliably than high-variance ones. An earlier version using raw team/venue identity as one-hot features scored **ROC-AUC 0.471 (worse than random)**; removing those high-cardinality columns in favor of engineered features raised it to 0.591.
 
 ## Interpretability
 
-Random Forest feature importance and SHAP values (Logistic Regression) were computed and **disagreed** on which features mattered most — Random Forest ranked head-to-head record highest, while SHAP on the deployed Logistic Regression model ranked toss decision and home/away higher. This reflects a real property of the two model types: linear models capture different relationships than tree-based models, so "feature importance" isn't a single objective truth.
+Random Forest feature importance and SHAP values (Logistic Regression) were computed offline and **disagreed** on which features mattered most — Random Forest ranked head-to-head record highest, while SHAP on the deployed Logistic Regression model ranked toss decision and home/away higher. This reflects a real property of the two model types: linear models capture different relationships than tree-based models, so "feature importance" isn't a single objective truth.
 
 ![Feature Importance](reports/feature_importance_rf.png)
+![SHAP Summary](reports/shap_summary_logreg.png)
 
 ## Web App
 
@@ -54,7 +53,7 @@ A Streamlit app lets you pick two teams, a venue, and toss details, and get a li
 
 ## Tech Stack
 
-Python · pandas · scikit-learn · XGBoost · LightGBM · SHAP · Streamlit
+Python · pandas · scikit-learn · XGBoost · LightGBM · SHAP (offline analysis) · Streamlit
 
 ## Known Limitations
 
