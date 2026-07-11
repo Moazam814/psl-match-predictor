@@ -117,3 +117,34 @@ print(f"F1 Score:  {f1_score(y_test, lgbm_pred):.3f}")
 print(f"ROC-AUC:   {roc_auc_score(y_test, lgbm_proba):.3f}")
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, lgbm_pred))
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    "C": [0.001, 0.01, 0.1, 1, 10, 100],
+    "penalty": ["l2"],
+    "solver": ["lbfgs"],
+}
+
+grid_search = GridSearchCV(
+    LogisticRegression(max_iter=1000),
+    param_grid,
+    cv=5,
+    scoring="roc_auc",
+)
+grid_search.fit(X_train_simple, y_train)
+
+print("Best params:", grid_search.best_params_)
+print("Best CV ROC-AUC:", grid_search.best_score_)
+
+best_log_reg = grid_search.best_estimator_
+tuned_pred = best_log_reg.predict(X_test_simple)
+tuned_proba = best_log_reg.predict_proba(X_test_simple)[:, 1]
+
+print("=== Logistic Regression (Tuned) ===")
+print(f"Accuracy:  {accuracy_score(y_test, tuned_pred):.3f}")
+print(f"Precision: {precision_score(y_test, tuned_pred):.3f}")
+print(f"Recall:    {recall_score(y_test, tuned_pred):.3f}")
+print(f"F1 Score:  {f1_score(y_test, tuned_pred):.3f}")
+print(f"ROC-AUC:   {roc_auc_score(y_test, tuned_proba):.3f}")
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, tuned_pred))
