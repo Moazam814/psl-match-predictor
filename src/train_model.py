@@ -70,3 +70,50 @@ print(f"F1 Score:  {f1_score(y_test, y_pred_simple):.3f}")
 print(f"ROC-AUC:   {roc_auc_score(y_test, y_proba_simple):.3f}")
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred_simple))
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+
+# Random Forest
+rf = RandomForestClassifier(n_estimators=200, max_depth=4, random_state=42)
+rf.fit(X_train_simple, y_train)
+rf_pred = rf.predict(X_test_simple)
+rf_proba = rf.predict_proba(X_test_simple)[:, 1]
+
+print("=== Random Forest (Simplified Features) ===")
+print(f"Accuracy:  {accuracy_score(y_test, rf_pred):.3f}")
+print(f"Precision: {precision_score(y_test, rf_pred):.3f}")
+print(f"Recall:    {recall_score(y_test, rf_pred):.3f}")
+print(f"F1 Score:  {f1_score(y_test, rf_pred):.3f}")
+print(f"ROC-AUC:   {roc_auc_score(y_test, rf_proba):.3f}")
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, rf_pred))
+
+# XGBoost
+xgb = XGBClassifier(n_estimators=200, max_depth=3, learning_rate=0.05, eval_metric='logloss', random_state=42)
+xgb.fit(X_train_simple, y_train)
+xgb_pred = xgb.predict(X_test_simple)
+xgb_proba = xgb.predict_proba(X_test_simple)[:, 1]
+
+print("=== XGBoost (Simplified Features) ===")
+print(f"Accuracy:  {accuracy_score(y_test, xgb_pred):.3f}")
+print(f"Precision: {precision_score(y_test, xgb_pred):.3f}")
+print(f"Recall:    {recall_score(y_test, xgb_pred):.3f}")
+print(f"F1 Score:  {f1_score(y_test, xgb_pred):.3f}")
+print(f"ROC-AUC:   {roc_auc_score(y_test, xgb_proba):.3f}")
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, xgb_pred))
+from lightgbm import LGBMClassifier
+
+lgbm = LGBMClassifier(n_estimators=200, max_depth=3, learning_rate=0.05, random_state=42, verbose=-1)
+lgbm.fit(X_train_simple, y_train)
+lgbm_pred = lgbm.predict(X_test_simple)
+lgbm_proba = lgbm.predict_proba(X_test_simple)[:, 1]
+
+print("=== LightGBM (Simplified Features) ===")
+print(f"Accuracy:  {accuracy_score(y_test, lgbm_pred):.3f}")
+print(f"Precision: {precision_score(y_test, lgbm_pred):.3f}")
+print(f"Recall:    {recall_score(y_test, lgbm_pred):.3f}")
+print(f"F1 Score:  {f1_score(y_test, lgbm_pred):.3f}")
+print(f"ROC-AUC:   {roc_auc_score(y_test, lgbm_proba):.3f}")
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, lgbm_pred))
