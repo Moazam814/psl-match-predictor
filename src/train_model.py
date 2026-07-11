@@ -26,7 +26,6 @@ X_train = combined_encoded.loc["train"][numeric_cols + [c for c in combined_enco
 X_test = combined_encoded.loc["test"][numeric_cols + [c for c in combined_encoded.columns if c not in df.columns]]
 y_train = train_df[target_col]
 y_test = test_df[target_col]
-
 print(f"X_train shape: {X_train.shape}")
 print(f"X_test shape: {X_test.shape}")
 print(X_train.columns.tolist()[:15])
@@ -52,10 +51,12 @@ categorical_cols_simple = ["toss_decision", "team1_home_away", "team2_home_away"
 numeric_cols = ["team1_last5_win_pct", "team2_last5_win_pct", "team1_h2h_win_pct", "team2_h2h_win_pct"]
 
 combined_simple = pd.get_dummies(combined, columns=categorical_cols_simple)
+
 X_train_simple = combined_simple.loc["train"][numeric_cols + [c for c in combined_simple.columns if any(c.startswith(p) for p in categorical_cols_simple)]]
 X_test_simple = combined_simple.loc["test"][numeric_cols + [c for c in combined_simple.columns if any(c.startswith(p) for p in categorical_cols_simple)]]
-
 print(f"Simplified X_train shape: {X_train_simple.shape}")
+X_train_simple = X_train_simple.astype(float)
+X_test_simple = X_test_simple.astype(float)
 
 log_reg_simple = LogisticRegression(max_iter=1000)
 log_reg_simple.fit(X_train_simple, y_train)
@@ -148,3 +149,38 @@ print(f"F1 Score:  {f1_score(y_test, tuned_pred):.3f}")
 print(f"ROC-AUC:   {roc_auc_score(y_test, tuned_proba):.3f}")
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, tuned_pred))
+import matplotlib
+matplotlib.use("Agg")  # so it saves to file instead of trying to pop up a window
+import matplotlib.pyplot as plt
+import os
+
+os.makedirs("reports", exist_ok=True)
+
+# Random Forest feature importance
+importances = pd.Series(rf.feature_importances_, index=X_train_simple.columns).sort_values()
+
+plt.figure(figsize=(8, 6))
+importances.plot(kind="barh")
+plt.title("Random Forest Feature Importance")
+plt.tight_layout()
+plt.savefig("reports/feature_importance_rf.png")
+plt.close()
+
+print("Saved reports/feature_importance_rf.png")
+print(importances.sort_values(ascending=False))
+import shap
+
+explainer = shap.LinearExplainer(log_reg_simple, X_train_simple)
+shap_values = explainer.shap_values(X_test_simple)
+
+plt.figure()
+shap.summary_plot(shap_values, X_test_simple, show=False)
+plt.tight_layout()
+plt.savefig("reports/shap_summary_logreg.png", bbox_inches="tight")
+plt.close()
+
+print("Saved reports/shap_summary_logreg.png")
+
+# average absolute SHAP value per feature = overall importance
+mean_abs_shap = pd.Series(abs(shap_values).mean(axis=0), index=X_test_simple.columns).sort_values(ascending=False)
+print(mean_abs_shap)
