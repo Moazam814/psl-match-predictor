@@ -19,6 +19,7 @@ st.markdown("""
         border-bottom: 3px solid #F2B134;
         padding-bottom: 12px;
     }
+            
 </style>
 """, unsafe_allow_html=True)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -130,7 +131,7 @@ if predict_clicked:
         "Team": [team1, team2],
         "Win Probability": [team1_win_prob, team2_win_prob],
     }).set_index("Team")
-    st.bar_chart(prob_df, horizontal=True)
+    st.bar_chart(prob_df, horizontal=True, color=["#F2B134"])
 
     st.caption("Note: predictions are based on historical patterns and inherent randomness in cricket — treat this as a data-driven estimate, not a certainty.")
 
