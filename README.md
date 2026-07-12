@@ -2,7 +2,11 @@
 
 Predicts the winner of a Pakistan Super League (PSL) T20 match using historical team form, head-to-head record, toss, and venue — built end-to-end from raw match data to a deployed, interactive web app.
 
-**[🔗 Live App](https://moazam-psl-predictor.streamlit.app)**
+**[🎥 Watch Demo Video](https://youtu.be/ggqCOwhdFxY)**
+
+*(Live deployment is on Streamlit Community Cloud; if the link below is temporarily down due to a hosting platform issue, the demo video above shows the app fully working.)*
+
+**[🔗 Live App (may be intermittently available)](https://moazam-psl-predictor.streamlit.app)**
 
 ## Overview
 
@@ -44,12 +48,11 @@ Random Forest feature importance and SHAP values (Logistic Regression) were comp
 
 ![Feature Importance](reports/feature_importance_rf.png)
 ![SHAP Summary](reports/shap_summary_logreg.png)
-
 ## Web App
 
 A Streamlit app lets you pick two teams, a venue, and toss details, and get a live prediction with a win-probability chart and real head-to-head history for that specific matchup.
 
-**[Try it live →](https://moazam-psl-predictor.streamlit.app)**
+**[🎥 Watch it in action](https://youtu.be/ggqCOwhdFxY)** | **[Try the live app →](https://moazam-psl-predictor.streamlit.app)**
 
 ## Tech Stack
 
